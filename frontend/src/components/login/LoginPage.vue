@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="alert alert-info">
-            Username: test<br />
-            Password: test
+            Username: admin<br />
+            Password: admin
         </div>
         <h2>Login <a href="/register" class="float-right" >Register User</a></h2>
         <form @submit.prevent="handleSubmit">
