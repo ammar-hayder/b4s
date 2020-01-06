@@ -1,5 +1,7 @@
-# vue-vuex-jwt-authentication-example
+# Frontend of assignment - Vue + Vuex - JWT Authentication 
 
-Vue + Vuex - JWT Authentication Tutorial & Example
-
-To see a demo and further details go to http://jasonwatmore.com/post/2018/07/06/vue-vuex-jwt-authentication-tutorial-example
+# What i have done
+  - A normal user can be created from login page using register user link.
+  - A normal user can post message and start disussion.
+  - Admin user can manage user.
+  - Login authentication using JWT.
