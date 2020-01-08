@@ -24,14 +24,14 @@ MessageController.newMessage);
 //Edit one message
 router.patch(
   "/:id([0-9]+)",
-  [checkJwt, checkRole(["ADMIN"])],
+  [checkJwt, checkRole(["ADMIN", "MESSAGE_CONTROLLER", "USER_TYPE_1"])],
   MessageController.editMessage
 );
 
 //Delete one message
 router.delete(
   "/:id([0-9]+)",
-  [checkJwt, checkRole(["ADMIN"])],
+  [checkJwt, checkRole(["ADMIN", "MESSAGE_CONTROLLER", "USER_TYPE_1"])],
   MessageController.deleteMessage
 );
 

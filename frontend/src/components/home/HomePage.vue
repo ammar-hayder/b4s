@@ -10,6 +10,9 @@
             <li v-if="user.role === 'ADMIN'" class="nav-item">
                 <a href="/manage-users" class="nav-link">Manage users</a>
             </li>
+            <li>
+                <router-link class="nav-link" to="/login">Logout</router-link>
+            </li>
         </ul>
         <form @submit.prevent="handleMessageSubmit">
             <div class="form-group">
@@ -31,13 +34,13 @@
                     <ul class="nav nav-pills card-header-pills float-right">
                         <li class="nav-item">
                            <a class="nav-link"  
-                                    v-show="message.author.id===user.id" 
-                                    @click="toggleEditModal();messageIdForEdit=message.id;messageEdit=message.text;">
-                                    Edit
+                                v-show="message.author.id===user.id || user.role ==='ADMIN'" 
+                                @click="toggleEditModal();messageIdForEdit=message.id;messageEdit=message.text;">
+                                Edit
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" @click="handleMessageDelete();messageIdForDelete=message.id;"  v-if="message.author.id===user.id"  >
+                            <a class="nav-link" @click="handleMessageDelete();messageIdForDelete=message.id;"  v-if="message.author.id===user.id || user.role ==='ADMIN'"  >
                                 Delete
                             </a>
                         </li>
@@ -46,15 +49,16 @@
                 </div>
                 <div class="card-body">
                     <blockquote class="blockquote mb-0">
+                        <p><small>
+                            On {{formatDate(message.createdAt)}} {{message.author.username}} wrote:
+                        </small></p>
                         <p> {{message.text }} </p>
-                        <footer class="blockquote-footer">
-                            <cite title="Source Title">{{message.author.username}}</cite>
-                            {{formatDate(message.createdAt)}} 
-                        </footer>
                         <div class="row mt-2" v-for="reply in message.replies" :key="reply.id" >
                             <div class="col-8 offset-4 align-self-end card" >
                                 <div class="card-body">
-                                    <h5 class="card-title">{{reply.author.username}}</h5>
+                                    <p><small>
+                                        On {{formatDate(message.createdAt)}} {{message.author.username}} replied:
+                                    </small></p>
                                     <p class="card-text"><small>{{reply.text}}</small></p>
                                 </div>
                             </div>
@@ -134,9 +138,6 @@
                 </div>
             </transition>
         </div>
-        <p>
-            <router-link to="/login">Logout</router-link>
-        </p>
     </div>
 </template>
 
@@ -232,7 +233,7 @@ export default {
             dispatch('messages/toggleEditModal');
         },
         formatDate : function (date) {
-            return moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+            return moment(date).format('LLL');
         }
     }
 };

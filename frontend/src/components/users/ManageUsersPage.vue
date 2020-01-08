@@ -10,6 +10,9 @@
             <li v-if="user.role === 'ADMIN'" class="nav-item">
                 <a href="/manage-users" class="nav-link active">Manage users</a>
             </li>
+            <li>
+                <router-link class="nav-link" to="/login">Logout</router-link>
+            </li>
         </ul>
         
         <em v-if="users.loading">Loading users...</em>
@@ -32,10 +35,6 @@
             </tr>
           </tbody>
         </table>
-        
-        <p>
-            <router-link to="/login">Logout</router-link>
-        </p>
     </div>
 </template>
 

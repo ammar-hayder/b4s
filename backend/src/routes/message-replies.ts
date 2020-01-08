@@ -11,14 +11,14 @@ router.post("/", [checkJwt, checkRole(["ADMIN","MESSAGE_CONTROLLER", "USER_TYPE_
 //Edit one message message reply
 router.patch(
   "/:id([0-9]+)",
-  [checkJwt, checkRole(["ADMIN"])],
+  [checkJwt, checkRole(["ADMIN", "MESSAGE_CONTROLLER", "USER_TYPE_1"])],
   MessageReplyController.editMessageReply
 );
 
 //Delete one message
 router.delete(
   "/:id([0-9]+)",
-  [checkJwt, checkRole(["ADMIN"])],
+  [checkJwt, checkRole(["ADMIN", "MESSAGE_CONTROLLER", "USER_TYPE_1"])],
   MessageReplyController.deleteMessageReply
 );
 
