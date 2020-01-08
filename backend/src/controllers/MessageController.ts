@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import * as _ from 'lodash';
 import { getRepository, createQueryBuilder } from "typeorm";
 import { validate } from "class-validator";
 
@@ -38,8 +39,7 @@ class MessageController{
   };
 
   static getMessagesByUserId = async(req: Request, res: Response) => {
-    //Get the ID from the url
-    const id: number = req.params.id;
+       const id: number = req.params.id;
 
     //Get the user from database
     try {
@@ -57,6 +57,7 @@ class MessageController{
                                 'author.updatedAt',
                                 'replies.id',
                                 'replies.text',
+                                'replies.createdAt',
                                 'replyAuthor.id', 
                                 'replyAuthor.username',  
                               ])
@@ -106,14 +107,14 @@ class MessageController{
                                 'author.updatedAt',
                                 'replies.id',
                                 'replies.text',
+                                'replies.createdAt',
                                 'replyAuthor.id', 
                                 'replyAuthor.username',  
                               ])
                         .orderBy('Message.createdAt', 'DESC')
                         .getMany();
-      res.send(messages);
-    //If all ok, send 201 response
-    res.status(201).send("Message created");
+    //If all ok, send all messages
+    res.send(messages);
   };
 
   static newMessageReply = async (req: Request, res: Response) => {
@@ -145,10 +146,9 @@ class MessageController{
     res.status(201).send("Message reply created");
   };
   static editMessage = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
+       const id = req.params.id;
 
-    //Get values from the body
+  
     const { text } = req.body;
 
     //Try to find message on database
@@ -158,7 +158,7 @@ class MessageController{
       message = await messageRepository.findOneOrFail(id);
     } catch (error) {
       //If not found, send a 404 response
-      res.status(404).send("message not found");
+      res.status(404).send({"message":"message not found"});
       return;
     }
 
@@ -174,29 +174,76 @@ class MessageController{
     try {
       await messageRepository.save(message);
     } catch (e) {
-      res.status(409).send("messagename already in use");
+      res.status(409).send({"message":"messagename already in use" });
       return;
     }
-    //After all send a 204 (no content, but accepted) response
-    res.status(204).send();
+    const messages = await createQueryBuilder("Message")
+                        .leftJoinAndSelect("Message.author", "author")
+                        .leftJoinAndSelect("Message.replies", "replies")
+                        .leftJoinAndSelect('replies.author', 'replyAuthor')
+                        .select(['Message.id',
+                                'Message.text',
+                                'Message.createdAt',
+                                'Message.updatedAt',
+                                'author.id',
+                                'author.username', 
+                                'author.createdAt',
+                                'author.updatedAt',
+                                'replies.id',
+                                'replies.text',
+                                'replies.createdAt',
+                                'replyAuthor.id', 
+                                'replyAuthor.username',  
+                              ])
+                        .orderBy('Message.createdAt', 'DESC')
+                        .getMany();
+    //If all ok, send all messages
+    res.send(messages);
   };
 
   static deleteMessage = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
+       const id = req.params.id;
 
     const messageRepository = getRepository(Message);
-    let message: Message;
+    const messageRepliesRepository = getRepository(MessageReplies);
+    let message;
     try {
-      message = await messageRepository.findOneOrFail(id);
+      message =  await createQueryBuilder("Message")
+                            .where({"id":id})
+                            .leftJoinAndSelect("Message.replies", "replies")
+                            .getOne();
+      if(message.replies.length >0){
+        await messageRepliesRepository.delete(_.map(message.replies, 'id'));
+      }
+      await messageRepository.delete(id);
     } catch (error) {
-      res.status(404).send("Message not found");
+      res.status(404).send({"message":error});
       return;
     }
-    messageRepository.delete(id);
+    
 
-    //After all send a 204 (no content, but accepted) response
-    res.status(204).send();
+    const messages = await createQueryBuilder("Message")
+                        .leftJoinAndSelect("Message.author", "author")
+                        .leftJoinAndSelect("Message.replies", "replies")
+                        .leftJoinAndSelect('replies.author', 'replyAuthor')
+                        .select(['Message.id',
+                                'Message.text',
+                                'Message.createdAt',
+                                'Message.updatedAt',
+                                'author.id',
+                                'author.username', 
+                                'author.createdAt',
+                                'author.updatedAt',
+                                'replies.id',
+                                'replies.text',
+                                'replies.createdAt',
+                                'replyAuthor.id', 
+                                'replyAuthor.username',  
+                              ])
+                        .orderBy('Message.createdAt', 'DESC')
+                        .getMany();
+    //If all ok, send all messages
+    res.send(messages);
   };
 };
 

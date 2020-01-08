@@ -23,8 +23,7 @@ class UserController{
   };
 
   static getOneById = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id: number = req.params.id;
+       const id: number = req.params.id;
 
     //Get the user from database
     const userRepository = getRepository(User);
@@ -70,10 +69,9 @@ class UserController{
   };
 
   static editUser = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
+       const id = req.params.id;
 
-    //Get values from the body
+  
     const { username, role } = req.body;
 
     //Try to find user on database
@@ -108,8 +106,7 @@ class UserController{
   };
 
   static deleteUser = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
+       const id = req.params.id;
 
     const userRepository = getRepository(User);
     let user: User;

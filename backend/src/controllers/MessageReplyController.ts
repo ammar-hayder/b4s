@@ -45,6 +45,7 @@ class MessageReplyController{
                             'author.updatedAt',
                             'replies.id',
                             'replies.text',
+                            'replies.createdAt',
                             'replyAuthor.id', 
                             'replyAuthor.username',  
                           ])
@@ -54,10 +55,9 @@ class MessageReplyController{
   };
 
   static editMessageReply = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
+       const id = req.params.id;
 
-    //Get values from the body
+  
     const { text } = req.body;
 
     //Try to find message on database
@@ -91,8 +91,7 @@ class MessageReplyController{
   };
 
   static deleteMessageReply = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
+       const id = req.params.id;
 
     const messageReplyRepository = getRepository(Message);
     let messageReply;

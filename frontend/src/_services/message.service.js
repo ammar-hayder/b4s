@@ -7,6 +7,8 @@ export const messageService = {
     getAll,
     getMessagesByUserId,
     newMessageReply,
+    messageEdit,
+    messageDelete
 };
 
 function newMessage(text) {
@@ -20,7 +22,23 @@ function newMessage(text) {
     return fetch(`${config.apiUrl}/messages`, requestOptions)
         .then(handleResponse);
 }
-
+function messageEdit(text, messageIdForEdit) {
+    const requestOptions = {
+        method: 'PATCH',
+        headers: {...authHeader(), 'Content-Type': 'application/json'},
+        body: JSON.stringify({text: text  })
+    };
+    return fetch(`${config.apiUrl}/messages/${messageIdForEdit}`, requestOptions)
+          .then(handleResponse);
+}
+function messageDelete( messageIdForDelete) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {...authHeader(), 'Content-Type': 'application/json'},
+    };
+    return fetch(`${config.apiUrl}/messages/${messageIdForDelete}`, requestOptions)
+          .then(handleResponse);
+}
 function newMessageReply(text, messageIdForReply) {
   console.log(text, messageIdForReply);
     const requestOptions = {
